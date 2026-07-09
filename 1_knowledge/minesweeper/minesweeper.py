@@ -192,7 +192,6 @@ class MinesweeperAI():
         self.moves_made.add(cell)
         self.mark_safe(cell)
         
-
         neighbors = set()
         row = cell[0]
         col = cell[1]
@@ -270,8 +269,6 @@ class MinesweeperAI():
             if new_sentences:
                 self.knowledge.extend(new_sentences)
                 change = True
-
-
 
     def make_safe_move(self):
         """
