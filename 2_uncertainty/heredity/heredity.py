@@ -140,25 +140,54 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         * everyone not in set` have_trait` does not have the trait.
     """
     
-    for name in people:
+    total_prob = 1
 
+    def gene_count(name):
         if name in two_genes:
-            genes = 2
+            return 2
         elif name in one_gene:
-            genes = 1
+            return 1
         else:
-            genes = 0
+            return 0
+        
+    def pass_gene_prob(genes):
+        mutation = PROBS["mutation"]
 
+        if genes == 0:
+            return mutation
+        elif genes == 1:
+            return 0.5
+        else:
+            return 1 - mutation
+        
+    for name in people:
+        genes = gene_count(name)
         has_trait = name in have_trait
 
-        trait_probability = PROBS["trait"][genes][has_trait]
+        trait_prob = PROBS["trait"][genes][has_trait]
 
-        if people.get(name).get("mother") is None:
-            gene_probability = PROBS["gene"][genes]
+        mother = people[name]["mother"]
+        father = people[name]["father"]
+
+        if mother is None:
+            gene_prob = PROBS["gene"][genes]
         else:
-            #childs probability is conditional on mum and dad
-            pass
+            mother_genes = gene_count(mother)
+            father_genes = gene_count(father)
 
+            mother_pass_prob = pass_gene_prob(mother_genes)
+            father_pass_prob = pass_gene_prob(father_genes)
+
+            if genes == 2:
+                gene_prob = mother_pass_prob * father_pass_prob
+            elif genes == 1:
+                gene_prob = mother_pass_prob * (1 - father_pass_prob) + father_pass_prob * (1 - mother_pass_prob)
+            else:
+                gene_prob = (1 - mother_pass_prob) * (1 - father_pass_prob)
+        
+        total_prob = total_prob * gene_prob * trait_prob
+
+    return total_prob
 
 
 def update(probabilities, one_gene, two_genes, have_trait, p):
