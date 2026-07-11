@@ -127,6 +127,13 @@ def powerset(s):
         )
     ]
 
+def gene_count(name, two_genes, one_gene):
+        if name in two_genes:
+            return 2
+        elif name in one_gene:
+            return 1
+        else:
+            return 0
 
 def joint_probability(people, one_gene, two_genes, have_trait):
     """
@@ -141,14 +148,6 @@ def joint_probability(people, one_gene, two_genes, have_trait):
     """
     
     total_prob = 1
-
-    def gene_count(name):
-        if name in two_genes:
-            return 2
-        elif name in one_gene:
-            return 1
-        else:
-            return 0
         
     def pass_gene_prob(genes):
         mutation = PROBS["mutation"]
@@ -161,7 +160,7 @@ def joint_probability(people, one_gene, two_genes, have_trait):
             return 1 - mutation
         
     for name in people:
-        genes = gene_count(name)
+        genes = gene_count(name, two_genes, one_gene)
         has_trait = name in have_trait
 
         trait_prob = PROBS["trait"][genes][has_trait]
@@ -172,8 +171,8 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         if mother is None:
             gene_prob = PROBS["gene"][genes]
         else:
-            mother_genes = gene_count(mother)
-            father_genes = gene_count(father)
+            mother_genes = gene_count(mother, two_genes, one_gene)
+            father_genes = gene_count(father, two_genes, one_gene)
 
             mother_pass_prob = pass_gene_prob(mother_genes)
             father_pass_prob = pass_gene_prob(father_genes)
@@ -197,7 +196,12 @@ def update(probabilities, one_gene, two_genes, have_trait, p):
     Which value for each distribution is updated depends on whether
     the person is in `have_gene` and `have_trait`, respectively.
     """
-    raise NotImplementedError
+    for name in probabilities:
+        genes = gene_count(name, two_genes, one_gene)
+        has_trait = name in have_trait
+
+        probabilities[name]["gene"][genes] += p
+        probabilities[name]["trait"][has_trait] += p
 
 
 def normalize(probabilities):
