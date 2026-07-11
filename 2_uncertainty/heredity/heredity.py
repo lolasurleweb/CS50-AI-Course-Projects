@@ -127,13 +127,15 @@ def powerset(s):
         )
     ]
 
+
 def gene_count(name, two_genes, one_gene):
-        if name in two_genes:
-            return 2
-        elif name in one_gene:
-            return 1
-        else:
-            return 0
+    if name in two_genes:
+        return 2
+    elif name in one_gene:
+        return 1
+    else:
+        return 0
+        
 
 def joint_probability(people, one_gene, two_genes, have_trait):
     """
@@ -180,7 +182,8 @@ def joint_probability(people, one_gene, two_genes, have_trait):
             if genes == 2:
                 gene_prob = mother_pass_prob * father_pass_prob
             elif genes == 1:
-                gene_prob = mother_pass_prob * (1 - father_pass_prob) + father_pass_prob * (1 - mother_pass_prob)
+                gene_prob = (mother_pass_prob * (1 - father_pass_prob) +
+                            father_pass_prob * (1 - mother_pass_prob))
             else:
                 gene_prob = (1 - mother_pass_prob) * (1 - father_pass_prob)
         
