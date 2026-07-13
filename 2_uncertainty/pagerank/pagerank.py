@@ -96,10 +96,10 @@ def sample_pagerank(corpus, damping_factor, n):
     current_page = random.choice(list(corpus.keys()))
 
     for _ in range(n):
-        counts[current_page] +=1
+        counts[current_page] += 1
 
         # choose next sample randomly based on the transition model of given page
-        transition_probs = transition_model( corpus, current_page, damping_factor)
+        transition_probs = transition_model(corpus, current_page, damping_factor)
 
         current_page = random.choices(
             population=list(transition_probs.keys()),
@@ -133,18 +133,21 @@ def iterate_pagerank(corpus, damping_factor):
     while True:
         new_pagerank = {}
 
-        for target_page in corpus:   #this is the page we want to calculate the pagerank for
+        for target_page in corpus:  # this is the page we want to calculate the pagerank for
             pr = 0
-            for source_page in corpus:   #iterate over every page in the dictionary
+            for source_page in corpus:  # iterate over every page in the dictionary
                 links = corpus[source_page]
 
                 if links:
-                    if target_page in links:   #check whether it links to our target page
-                        pr += pagerank[source_page] / len(links)   #probability that we were on page source and chose the link to page target
+                    if target_page in links:  # check whether it links to our target page 
+                        # probability that we were on page source and chose the link to page target
+                        pr += pagerank[source_page] / len(links)   
                 else:
-                    pr += pagerank[source_page] / len(corpus)   #if page has no links, link to every page
+                    # if page has no links, link to every page
+                    pr += pagerank[source_page] / len(corpus)
 
-            new_pagerank[target_page] = (1 - damping_factor) / len(corpus) + damping_factor * pr #formula specified in task
+            new_pagerank[target_page] = ((1 - damping_factor) / len(corpus)
+                                         + damping_factor * pr)  # formula specified in task
 
         # check whether every page changed by at most 0.001
         converged = all(
