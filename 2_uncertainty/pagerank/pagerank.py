@@ -85,7 +85,34 @@ def sample_pagerank(corpus, damping_factor, n):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+
+    # keeps track of how many times you visited each page
+    counts = {
+        page: 0
+        for page in corpus
+    }
+
+    # first sample is randomly chosen
+    current_page = random.choice(list(corpus.keys()))
+
+    for _ in range(n):
+        counts[current_page] +=1
+
+        # choose next sample randomly based on the transition model of given page
+        transition_probs = transition_model( corpus, current_page, damping_factor)
+
+        current_page = random.choices(
+            population=list(transition_probs.keys()),
+            weights=list(transition_probs.values()),
+            k=1
+        )[0] #always returns a list, so need to extract the element (["html.1"] -> "html.1")
+
+    pagerank = {
+        page: count / n
+        for page, count in counts.items()
+    }
+
+    return pagerank
 
 
 def iterate_pagerank(corpus, damping_factor):
