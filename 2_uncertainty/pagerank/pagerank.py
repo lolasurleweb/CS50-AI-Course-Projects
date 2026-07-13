@@ -105,7 +105,7 @@ def sample_pagerank(corpus, damping_factor, n):
             population=list(transition_probs.keys()),
             weights=list(transition_probs.values()),
             k=1
-        )[0] #always returns a list, so need to extract the element (["html.1"] -> "html.1")
+        )[0]   # always returns a list, so need to extract the element (["html.1"] -> "html.1")
 
     pagerank = {
         page: count / n
@@ -124,7 +124,40 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    # initialize pagerank values to equal probability for each page
+    pagerank = {
+        page: 1 / len(corpus)
+        for page in corpus
+    }
+
+    while True:
+        new_pagerank = {}
+
+        for target_page in corpus:   #this is the page we want to calculate the pagerank for
+            pr = 0
+            for source_page in corpus:   #iterate over every page in the dictionary
+                links = corpus[source_page]
+
+                if links:
+                    if target_page in links:   #check whether it links to our target page
+                        pr += pagerank[source_page] / len(links)   #probability that we were on page source and chose the link to page target
+                else:
+                    pr += pagerank[source_page] / len(corpus)   #if page has no links, link to every page
+
+            new_pagerank[target_page] = (1 - damping_factor) / len(corpus) + damping_factor * pr #formula specified in task
+
+        # check whether every page changed by at most 0.001
+        converged = all(
+            abs(new_pagerank[page] - pagerank[page]) <= 0.001
+            for page in corpus
+        )
+
+        pagerank = new_pagerank
+
+        if converged:
+            break
+
+    return pagerank
 
 
 if __name__ == "__main__":
