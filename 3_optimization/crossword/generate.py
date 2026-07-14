@@ -242,6 +242,7 @@ class CrosswordCreator():
         ordered_domain_values = sorted(constraints, key=constraints.get)
         return ordered_domain_values
 
+
     def select_unassigned_variable(self, assignment):
         """
         Return an unassigned variable not already part of `assignment`.
@@ -250,7 +251,32 @@ class CrosswordCreator():
         degree. If there is a tie, any of the tied variables are acceptable
         return values.
         """
-        raise NotImplementedError
+        best_variable = None
+
+        for var in self.crossword.variables:
+
+            if var in assignment:
+                continue
+
+            if best_variable is None:
+                best_variable = var
+                continue
+
+            current_domain_size = len(self.domains[var])
+            best_domain_size = len(self.domains[best_variable])
+
+            if current_domain_size < best_domain_size:
+                best_variable = var
+
+            elif current_domain_size == best_domain_size:
+                current_degree = len(self.crossword.neighbors(var))
+                best_degree = len(self.crossword.neighbors(best_variable))
+
+                if current_degree > best_degree:
+                    best_variable = var
+
+        return best_variable
+        
 
     def backtrack(self, assignment):
         """
