@@ -145,7 +145,7 @@ class CrosswordCreator():
                 self.domains[x].remove(word_x)
                 revision = True
 
-            return revision
+        return revision
         
 
     def ac3(self, arcs=None):
@@ -224,7 +224,23 @@ class CrosswordCreator():
         The first value in the list, for example, should be the one
         that rules out the fewest values among the neighbors of `var`.
         """
-        raise NotImplementedError
+        constraints = {word: 0 for word in self.domains[var]}
+
+        for word in self.domains[var]:
+
+            for neighbor in self.crossword.neighbors(var):
+
+                if neighbor in assignment:
+                    continue
+
+                i, j = self.crossword.overlaps[var, neighbor]
+
+                for neighbors_word in self.domains[neighbor]:
+                    if word[i] != neighbors_word[j]:
+                        constraints[word] += 1
+
+        ordered_domain_values = sorted(constraints, key=constraints.get)
+        return ordered_domain_values
 
     def select_unassigned_variable(self, assignment):
         """
