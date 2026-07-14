@@ -294,13 +294,32 @@ class CrosswordCreator():
         
         for val in self.order_domain_values(var, assignment):
             assignment[var] = val
-            
+
             if self.consistent(assignment):
-                result = self.backtrack(assignment)
+
+                # Save all domains before AC-3 modifies them
+                saved_domains = {
+                    variable: self.domains[variable].copy()
+                    for variable in self.domains
+                }
+
+                self.domains[var] = {val}
+
+                # Since var's domain changed, revise its neighbors against var
+                arcs = [
+                    (neighbor, var)
+                    for neighbor in self.crossword.neighbors(var)
+                ]
+
+                if self.ac3(arcs):
+                    result = self.backtrack(assignment)
                 
-                if result is not None:
-                    return result
+                    if result is not None:
+                        return result
                 
+                # This branch failed, so restore all domains
+                self.domains = saved_domains
+
             del assignment[var]
                         
         return None
