@@ -135,7 +135,7 @@ class CrosswordCreator():
                 #if word_x[i] == word_y[j]:
                     #match = True
                     #break
-                    
+
             match = any(
                 word_x[i] == word_y[j]
                 for word_y in self.domains[y]
@@ -157,7 +157,26 @@ class CrosswordCreator():
         Return True if arc consistency is enforced and no domains are empty;
         return False if one or more domains end up empty.
         """
-        raise NotImplementedError
+
+        if arcs is None:
+            arcs = []
+
+            for x in self.crossword.variables:
+                for y in self.crossword.variables:
+                    if x != y and self.crossword.overlaps[x, y] is not None:
+                        arcs.append((x, y))
+
+        while arcs:
+            x, y = arcs.pop(0)
+            if self.revise(x, y):   # returns True when a revision was made
+                if len(self.domains[x]) == 0:
+                    return False
+                for z in self.crossword.neighbors(x):
+                    if z != y:
+                        arcs.append((z, x))
+
+        return True
+
 
     def assignment_complete(self, assignment):
         """
