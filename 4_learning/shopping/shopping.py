@@ -109,6 +109,7 @@ def load_data(filename):
     
     return evidence, labels
 
+
 def train_model(evidence, labels):
     """
     Given a list of evidence lists and a list of labels, return a
@@ -134,8 +135,28 @@ def evaluate(labels, predictions):
     representing the "true negative rate": the proportion of
     actual negative labels that were accurately identified.
     """
-    raise NotImplementedError
+    pos_labels = 0
+    pos_estimates = 0
 
+    neg_labels = 0
+    neg_estimates = 0
+
+    for true, estimate in zip(labels, predictions):
+        if true == 1:
+            pos_labels += 1
+
+            if estimate == true:
+                pos_estimates += 1
+        else:
+            neg_labels += 1
+
+            if estimate == true:
+                neg_estimates += 1
+
+    sensitivity = pos_estimates / pos_labels
+    specifity = neg_estimates / neg_labels
+
+    return sensitivity, specifity
 
 if __name__ == "__main__":
     main()
