@@ -83,7 +83,7 @@ def load_data(filename):
         next(reader)
 
         for row in reader:
-            evidence.append = [
+            evidence.append([
                 int(row[0]),
                 float(row[1]),
                 int(row[2]),
@@ -101,7 +101,7 @@ def load_data(filename):
                 int(row[14]),
                 1 if row[15] == "Returning_Visitor" else 0,
                 1 if row[16] == "TRUE" else 0
-            ]
+            ])
 
             labels.append(
                 1 if row[17] == "TRUE" else 0
