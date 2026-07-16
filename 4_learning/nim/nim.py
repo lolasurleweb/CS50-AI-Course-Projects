@@ -138,8 +138,20 @@ class NimAI():
         Q-value in `self.q`. If there are no available actions in
         `state`, return 0.
         """
-        raise NotImplementedError
 
+        best_future_reward = 0
+
+        actions = Nim.available_actions(state)
+
+        if len(actions) == 0:
+            return 0
+        
+        for action in actions:
+            if self.get_q_value(state, action) > best_future_reward:
+                best_future_reward = self.get_q_value(state, action)
+
+        return best_future_reward
+    
     def choose_action(self, state, epsilon=True):
         """
         Given a state `state`, return an action `(i, j)` to take.
